@@ -7,12 +7,21 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 function handleFooBar(req, res) {
-  const name = String(req.body?.name ?? "").toLowerCase();
-  const value = String(req.body?.value ?? "").toLowerCase();
+  const body = req.body || {};
+  console.log("Received post:", body);
 
-  console.log("Received post:", req.body);
+  // n8n "Using Fields Below" with Name=Foo Value=Bar → { "Foo": "Bar" }
+  const entries = Object.entries(body).map(([k, v]) => [
+    String(k).toLowerCase(),
+    String(v).toLowerCase(),
+  ]);
 
-  if (name === "foo" && value === "bar") {
+  const foobared =
+    entries.some(([k, v]) => k === "foo" && v === "bar") ||
+    (String(body.name ?? "").toLowerCase() === "foo" &&
+      String(body.value ?? "").toLowerCase() === "bar");
+
+  if (foobared) {
     return res.send("you got foobared");
   }
 
@@ -49,7 +58,7 @@ app.get("/", (_req, res) => {
 <body>
   <div>
     <h1>welcome to foo bar 👋</h1>
-    <p>POST to <code>/post</code> with JSON <code>{ "name": "foo", "value": "bar" }</code> to get foobared.</p>
+    <p>POST JSON like n8n: <code>{ "Foo": "Bar" }</code> to this page to get foobared.</p>
   </div>
 </body>
 </html>`);
