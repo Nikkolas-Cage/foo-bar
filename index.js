@@ -6,17 +6,21 @@ const PORT = process.env.PORT || 9005;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.post("/post", (req, res) => {
-  const { name, value } = req.body;
+function handleFooBar(req, res) {
+  const name = String(req.body?.name ?? "").toLowerCase();
+  const value = String(req.body?.value ?? "").toLowerCase();
 
-  console.log("Received post:", { name, value });
+  console.log("Received post:", req.body);
 
   if (name === "foo" && value === "bar") {
-    return res.json(true);
+    return res.send("you got foobared");
   }
 
   res.send("no you didnt fo barred me");
-});
+}
+
+app.post("/", handleFooBar);
+app.post("/post", handleFooBar);
 
 app.get("/", (_req, res) => {
   res.type("html").send(`<!DOCTYPE html>
@@ -26,7 +30,6 @@ app.get("/", (_req, res) => {
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>foo bar</title>
   <style>
-    :root { color-scheme: light; }
     body {
       margin: 0;
       min-height: 100vh;
@@ -35,17 +38,19 @@ app.get("/", (_req, res) => {
       font-family: "Segoe UI", system-ui, sans-serif;
       background: linear-gradient(160deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
       color: #e8f1f2;
-    }
-    h1 {
-      font-size: clamp(2rem, 6vw, 3.5rem);
-      font-weight: 700;
-      letter-spacing: 0.02em;
       text-align: center;
+      padding: 1.5rem;
     }
+    h1 { font-size: clamp(1.8rem, 5vw, 3rem); margin: 0 0 0.75rem; }
+    p { opacity: 0.85; max-width: 28rem; line-height: 1.5; }
+    code { background: rgba(255,255,255,0.1); padding: 0.15em 0.4em; border-radius: 4px; }
   </style>
 </head>
 <body>
-  <h1>you got foo bared 😈</h1>
+  <div>
+    <h1>welcome to foo bar 👋</h1>
+    <p>POST to <code>/post</code> with JSON <code>{ "name": "foo", "value": "bar" }</code> to get foobared.</p>
+  </div>
 </body>
 </html>`);
 });
