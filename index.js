@@ -19,7 +19,7 @@ app.post("/post", (req, res) => {
 });
 
 app.get("/", (_req, res) => {
-  res.send("POST to /post with JSON { \"name\": \"foo\", \"value\": \"bar\" }");
+  res.send("you got foobared 😈");
 });
 
 app.listen(PORT, () => {
