@@ -1,0 +1,6 @@
+services:
+  foo-bar:
+    build: .
+    ports:
+      - "9005:9005"
+    restart: unless-stopped
